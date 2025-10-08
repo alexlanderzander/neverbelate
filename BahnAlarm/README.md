@@ -1,97 +1,60 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+where i left off
 
-# Getting Started
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+** **actually maybe we should do something first since we can see** **│
 
-## Step 1: Start Metro
+**│**    **that the alarm is set but is it going of i will test this now**│
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+**│** **   ** and i will also check if the delay time is correct and i m **  **│
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+**│**    **surprised to see that the alarm is not going of and the delay**│
 
-```sh
-# Using npm
-npm start
+**│** **   ** time is also incorrect it says on time for the next train i** **│
 
-# OR using Yarn
-yarn start
-```
+**│**    **hope it is looking for the correct day we need some logging **  **│**
 
-## Step 2: Build and run your app
+**│**    **to investigate this maybe it is looking for the next day.** **    **│
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+**╰───────────────────────────────────────────────────────────────────╯**
 
-### Android
+**✦ **You've hit on two very important issues. Thank you for testing
 
-```sh
-# Using npm
-npm run android
+**  **this so thoroughly and providing this feedback.
 
-# OR using Yarn
-yarn android
-```
+**   **1. **The Silent Alarm:** You are absolutely right. The app
 
-### iOS
+**      **calculates the time but I have not yet implemented the
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+**      **functionality to actually schedule the system alarm or
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+**      **notification. This is a critical missing piece.
 
-```sh
-bundle install
-```
+**   **2. **Incorrect Delay Time:** Your suspicion is likely correct. It's
 
-Then, and every time you update your native dependencies, run:
+**      **possible the API does not provide delay information for
 
-```sh
-bundle exec pod install
-```
+**      **trains far in the future (like tomorrow), and it's also
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+**      **possible my logic for choosing the day has a bug.
 
-```sh
-# Using npm
-npm run ios
+**  **You are right, we need to investigate. I will follow your
 
-# OR using Yarn
-yarn ios
-```
+**  **suggestion and add detailed logging to the **DashboardScreen**. This
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+**  **will show us exactly what's happening. I will log:
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+**   **1. The commute time being used from your settings.
 
-## Step 3: Modify your app
+**   **2. The exact date and time being sent to the API for the query.
 
-Now that you have successfully run the app, let's make changes!
+**   **3. The full, raw data response we get back from the API.
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+**  **This will tell us immediately if the app is looking at the wrong
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+**  **day or if the API simply isn't providing the delay information
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+**  **yet. After we diagnose this, I will address the silent alarm
 
-## Congratulations! :tada:
+**  **functionality.
 
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+**  **I will now add the logging to the **DashboardScreen**.
