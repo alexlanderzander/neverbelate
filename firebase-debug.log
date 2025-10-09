@@ -1,0 +1,22 @@
+[debug] [2025-10-09T15:14:59.622Z] ----------------------------------------------------------------------
+[debug] [2025-10-09T15:14:59.624Z] Command:       /opt/homebrew/Cellar/node/24.5.0/bin/node /opt/homebrew/bin/firebase
+[debug] [2025-10-09T15:14:59.625Z] CLI Version:   13.27.0
+[debug] [2025-10-09T15:14:59.625Z] Platform:      darwin
+[debug] [2025-10-09T15:14:59.625Z] Node Version:  v24.5.0
+[debug] [2025-10-09T15:14:59.625Z] Time:          Thu Oct 09 2025 17:14:59 GMT+0200 (Central European Summer Time)
+[debug] [2025-10-09T15:14:59.625Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-10-09T15:14:59.626Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2025-10-09T15:14:59.641Z] TypeError: Cannot read properties of undefined (reading '0')
+    at Command.<anonymous> (/opt/homebrew/lib/node_modules/firebase-tools/lib/index.js:58:21)
+    at Command.listener [as _actionHandler] (/opt/homebrew/lib/node_modules/firebase-tools/node_modules/commander/index.js:413:31)
+    at Command._parseCommand (/opt/homebrew/lib/node_modules/firebase-tools/node_modules/commander/index.js:914:14)
+    at Command.parse (/opt/homebrew/lib/node_modules/firebase-tools/node_modules/commander/index.js:717:10)
+    at Object.<anonymous> (/opt/homebrew/lib/node_modules/firebase-tools/lib/bin/firebase.js:129:22)
+    at Module._compile (node:internal/modules/cjs/loader:1738:14)
+    at Object..js (node:internal/modules/cjs/loader:1871:10)
+    at Module.load (node:internal/modules/cjs/loader:1470:32)
+    at Module._load (node:internal/modules/cjs/loader:1290:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+[error] 
+[error] Error: An unexpected error has occurred.
