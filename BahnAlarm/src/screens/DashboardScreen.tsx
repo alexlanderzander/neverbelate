@@ -4,6 +4,7 @@ import { ScrollView, View, TouchableOpacity, Text, StyleSheet, SafeAreaView } fr
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import { subMinutes, parseISO, formatISO } from 'date-fns';
 
 import { theme, colors } from '../styles/styles';
 import { AlarmDisplay } from '../components/AlarmDisplay';
@@ -11,10 +12,11 @@ import { StatusCard } from '../components/StatusCard';
 import { AdjustmentHistory } from '../components/AdjustmentHistory';
 
 import { findJourney } from '../api/DbApiService';
-import { getNextArrivalDateTime } from '../utils/timeHelper';
+import { getNextArrivalDateTime, getNextUpcomingAlarm } from '../utils/timeHelper';
 import { notificationService } from '../services/NotificationService';
 import type { Journey } from '../types/ApiTypes';
 import type { UserSettings } from '../types/UserSettings';
+import type { Alarm } from '../types/Alarm';
 import type { AlarmAdjustment } from '../types/AlarmAdjustment';
 
 const ALARM_TIME_KEY = '@BahnAlarm:alarmTime';
@@ -31,29 +33,34 @@ export const DashboardScreen = ({ navigation }) => {
     setIsLoading(true);
     try {
       const settingsString = await AsyncStorage.getItem(USER_SETTINGS_KEY);
-      const alarmTimeString = await AsyncStorage.getItem(ALARM_TIME_KEY);
       const historyString = await AsyncStorage.getItem(ADJUSTMENT_HISTORY_KEY);
-
-      if (alarmTimeString) {
-        setAlarmTime(alarmTimeString);
-        const alarmDate = new Date(alarmTimeString);
-        notificationService.scheduleNotification(alarmDate, "It's time to go!");
-      }
 
       setHistory(historyString ? JSON.parse(historyString) : []);
 
       if (settingsString) {
-        let settings: UserSettings = JSON.parse(settingsString);
-        // Migration logic for old settings
-        if (!settings.arrivalTime && (settings as any).departureTime) {
-          settings.arrivalTime = (settings as any).departureTime;
-          delete (settings as any).departureTime;
-          await AsyncStorage.setItem(USER_SETTINGS_KEY, JSON.stringify(settings));
-        }
+        const settings: UserSettings = JSON.parse(settingsString);
+        const nextAlarm = getNextUpcomingAlarm(settings.alarms);
 
-        const nextArrivalDateTime = getNextArrivalDateTime(settings.arrivalTime);
-        const journeyData = await findJourney(settings.startStation.id, settings.destinationStation.id, nextArrivalDateTime, false);
-        setJourney(journeyData.journeys[0] ?? null);
+        if (nextAlarm) {
+          const nextArrivalDateTime = getNextArrivalDateTime(nextAlarm.arrivalTime);
+          const journeyData = await findJourney(settings.startStation.id, settings.destinationStation.id, nextArrivalDateTime, false);
+          const leg = journeyData.journeys[0]?.legs[0];
+
+          if (leg) {
+            const plannedDeparture = parseISO(leg.plannedDeparture);
+            const delaySeconds = leg.departureDelay ?? 0;
+            const actualDeparture = new Date(plannedDeparture.getTime() + delaySeconds * 1000);
+            const newAlarmTime = subMinutes(actualDeparture, nextAlarm.preparationTime);
+
+            await AsyncStorage.setItem(ALARM_TIME_KEY, formatISO(newAlarmTime));
+            setAlarmTime(formatISO(newAlarmTime));
+            notificationService.scheduleNotification(newAlarmTime, "It's time to go!");
+          }
+
+          setJourney(journeyData.journeys[0] ?? null);
+        } else {
+          setJourney(null);
+        }
       } else {
         setJourney(null);
       }

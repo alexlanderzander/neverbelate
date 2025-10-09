@@ -3,6 +3,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { DashboardScreen } from '../screens/DashboardScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
+import { AlarmFormScreen } from '../screens/AlarmFormScreen';
 import { colors } from '../styles/styles';
 
 const Stack = createNativeStackNavigator();
@@ -31,6 +32,11 @@ export const AppNavigator = () => {
         name="Settings"
         component={SettingsScreen}
         options={{ title: 'Settings' }}
+      />
+      <Stack.Screen
+        name="AlarmForm"
+        component={AlarmFormScreen}
+        options={{ title: 'Alarm' }}
       />
     </Stack.Navigator>
   );
