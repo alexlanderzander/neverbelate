@@ -1,60 +1,104 @@
-where i left off
+# BahnAlarm: App & Architecture Overview
 
+## 1. App Overview
 
-** **actually maybe we should do something first since we can see** **│
+**BahnAlarm** is a mobile application for train commuters in Germany. It provides a dynamic, delay-aware alarm system to ensure users arrive at their destination on time.
 
-**│**    **that the alarm is set but is it going of i will test this now**│
+The app allows users to configure their commute, including start and destination stations, desired arrival time, and preparation time. Based on this, BahnAlarm calculates and sets an alarm.
 
-**│** **   ** and i will also check if the delay time is correct and i m **  **│
+The app monitors train schedules in near real-time using the Deutsche Bahn (DB) API. It adjusts the alarm if the user's train is delayed, ensuring the user is only woken up when necessary and can still make it to their destination on time.
 
-**│**    **surprised to see that the alarm is not going of and the delay**│
+## 2. Core Features
 
-**│** **   ** time is also incorrect it says on time for the next train i** **│
+*   **Commute Configuration:**
+    *   Set start and destination stations with autocomplete search.
+    *   Set desired arrival time.
+    *   Set preparation time.
+*   **Dynamic Alarm Calculation:**
+    *   Calculates the initial alarm time based on user settings and the planned train departure.
+*   **Real-time Delay Monitoring:**
+    *   Periodically fetches the latest journey information from the DB API.
+*   **Automatic Alarm Adjustment:**
+    *   Recalculates and adjusts the alarm time if a delay is detected.
+*   **Push Notifications:**
+    *   Uses local push notifications to trigger the alarm.
+*   **Journey Status Display:**
+    *   Displays the current status of the upcoming train journey, including departure/arrival times and delays.
+*   **Adjustment History:**
+    *   Shows a history of alarm time adjustments due to train delays.
 
-**│**    **hope it is looking for the correct day we need some logging **  **│**
+## 3. Architecture
 
-**│**    **to investigate this maybe it is looking for the next day.** **    **│
+BahnAlarm is built with React Native using a component-based architecture with a clear separation of concerns.
 
-**╰───────────────────────────────────────────────────────────────────╯**
+### High-Level Diagram
 
-**✦ **You've hit on two very important issues. Thank you for testing
+```
++---------------------+      +-------------------------+      +------------------+
+|   React Native UI   |      |      Business Logic     |      |     Services     |
+| (Screens & Comps)   |      | (State Mgmt & Utils)    |      | (API, Notifs, BG)|
++---------------------+      +-------------------------+      +------------------+
+        |                              |                              |
+        v                              v                              v
++--------------------------------------------------------------------------------+
+|                               React Native Bridge                              |
++--------------------------------------------------------------------------------+
+        |                              |                              |
+        v                              v                              v
++---------------------+      +-------------------------+      +------------------+
+|    Native Modules   |      |      DB Navigator API   |      |   System APIs    |
+| (Push, BG Fetch)    |      |                         |      | (iOS/Android)    |
++---------------------+      +-------------------------+      +------------------+
+```
 
-**  **this so thoroughly and providing this feedback.
+### Component Breakdown
 
-**   **1. **The Silent Alarm:** You are absolutely right. The app
+*   **UI Layer (React Native):**
+    *   **Screens (`src/screens`):** Top-level components for main views (e.g., `DashboardScreen`, `SettingsScreen`).
+    *   **Components (`src/components`):** Reusable UI building blocks (e.g., `AlarmDisplay`, `StatusCard`, `TrainConnectionForm`).
+*   **Business Logic Layer:**
+    *   **State Management:** Uses React's built-in state management (`useState`, `useCallback`) and `AsyncStorage` for data persistence.
+    *   **Utilities (`src/utils`):** Helper functions for tasks like date and time manipulation (`timeHelper.ts`).
+*   **Services Layer (`src/services`):**
+    *   **API Service (`src/api/DbApiService.ts`):** Handles communication with the Deutsche Bahn (DB) API.
+    *   **Notification Service (`src/services/NotificationService.ts`):** Manages local push notifications.
+    *   **Background Service (`src/services/BackgroundUpdateService.ts`):** Uses `react-native-background-fetch` for background data fetching.
 
-**      **calculates the time but I have not yet implemented the
+## 4. Technologies Used
 
-**      **functionality to actually schedule the system alarm or
+*   **Framework:** React Native
+*   **Language:** TypeScript
+*   **UI:**
+    *   React Navigation
+    *   Core React Native components
+*   **State Management:**
+    *   React Hooks
+    *   `@react-native-async-storage/async-storage`
+*   **Services:**
+    *   `fetch` API
+    *   `@react-native-community/push-notification-ios`
+    *   `react-native-push-notification`
+    *   `react-native-background-fetch`
+*   **Utilities:**
+    *   `date-fns`
 
-**      **notification. This is a critical missing piece.
+## 5. File Structure
 
-**   **2. **Incorrect Delay Time:** Your suspicion is likely correct. It's
+```
+BahnAlarm/
+├── android/
+├── ios/
+├── src/
+│   ├── api/
+│   ├── components/
+│   ├── navigation/
+│   ├── screens/
+│   ├── services/
+│   ├── styles/
+│   ├── types/
+│   └── utils/
+├── App.tsx
+└── package.json
+```
 
-**      **possible the API does not provide delay information for
-
-**      **trains far in the future (like tomorrow), and it's also
-
-**      **possible my logic for choosing the day has a bug.
-
-**  **You are right, we need to investigate. I will follow your
-
-**  **suggestion and add detailed logging to the **DashboardScreen**. This
-
-**  **will show us exactly what's happening. I will log:
-
-**   **1. The commute time being used from your settings.
-
-**   **2. The exact date and time being sent to the API for the query.
-
-**   **3. The full, raw data response we get back from the API.
-
-**  **This will tell us immediately if the app is looking at the wrong
-
-**  **day or if the API simply isn't providing the delay information
-
-**  **yet. After we diagnose this, I will address the silent alarm
-
-**  **functionality.
-
-**  **I will now add the logging to the **DashboardScreen**.
+This structure promotes maintainability and scalability.

@@ -7,7 +7,7 @@ import { subMinutes, parseISO, format, formatISO } from 'date-fns';
 import { theme } from '../styles/styles';
 import { TrainConnectionForm } from '../components/TrainConnectionForm';
 import { findJourney } from '../api/DbApiService';
-import { getNextCommuteDateTime } from '../utils/timeHelper'; // <-- IMPORT THE HELPER
+import { getNextArrivalDateTime } from '../utils/timeHelper'; // <-- IMPORT THE HELPER
 import type { UserSettings } from '../types/UserSettings';
 
 const ALARM_TIME_KEY = '@BahnAlarm:alarmTime';
@@ -36,9 +36,9 @@ export const SettingsScreen = ({ navigation }) => {
     try {
       await AsyncStorage.setItem(USER_SETTINGS_KEY, JSON.stringify(settings));
 
-      // *** FIX: Calculate and use the correct departure time ***
-      const nextCommuteDateTime = getNextCommuteDateTime(settings.departureTime);
-      const journeyResponse = await findJourney(settings.startStation.id, settings.destinationStation.id, nextCommuteDateTime);
+      // *** FIX: Calculate and use the correct arrival time ***
+      const nextArrivalDateTime = getNextArrivalDateTime(settings.arrivalTime);
+      const journeyResponse = await findJourney(settings.startStation.id, settings.destinationStation.id, nextArrivalDateTime, false);
       const leg = journeyResponse.journeys[0]?.legs[0];
 
       if (!leg) {

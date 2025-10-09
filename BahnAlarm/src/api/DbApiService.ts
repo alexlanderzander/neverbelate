@@ -36,18 +36,26 @@ export const searchStations = async (query: string): Promise<Location[]> => {
  * Finds journeys between two stations.
  * @param fromId The ID of the departure station.
  * @param toId The ID of the arrival station.
+ * @param departure The desired departure time.
+ * @param arrival The desired arrival time.
  * @returns A promise that resolves to the journeys response.
  */
 export const findJourney = async (
   fromId: string,
   toId: string,
-  departure: string, // Add departure time parameter
+  dateTime: string, // Combined date and time parameter
+  isDeparture: boolean = true, // Flag to indicate if the time is for departure
 ): Promise<JourneysResponse> => {
   const url = new URL(`${API_BASE_URL}/journeys`);
   url.searchParams.append('from', fromId);
   url.searchParams.append('to', toId);
   url.searchParams.append('results', '1');
-  url.searchParams.append('departure', departure); // Use the provided departure time
+
+  if (isDeparture) {
+    url.searchParams.append('departure', dateTime);
+  } else {
+    url.searchParams.append('arrival', dateTime);
+  }
 
   try {
     const response = await fetch(url.toString());

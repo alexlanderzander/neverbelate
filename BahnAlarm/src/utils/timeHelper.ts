@@ -2,22 +2,22 @@
 import { set, isPast, addDays, formatISO } from 'date-fns';
 
 /**
- * Calculates the next occurrence of a given commute time.
+ * Calculates the next occurrence of a given arrival time.
  * If the time is in the future today, it returns today's date with that time.
  * If the time is in the past today, it returns tomorrow's date with that time.
- * @param departureTimeString A string representing the time, e.g., "08:00"
- * @returns An ISO 8601 string of the next commute date and time.
+ * @param arrivalTimeString A string representing the time, e.g., "08:00"
+ * @returns An ISO 8601 string of the next arrival date and time.
  */
-export const getNextCommuteDateTime = (departureTimeString: string): string => {
+export const getNextArrivalDateTime = (arrivalTimeString: string): string => {
   const now = new Date();
-  const [hours, minutes] = departureTimeString.split(':').map(Number);
+  const [hours, minutes] = arrivalTimeString.split(':').map(Number);
 
-  let nextCommuteDate = set(now, { hours, minutes, seconds: 0, milliseconds: 0 });
+  let nextArrivalDate = set(now, { hours, minutes, seconds: 0, milliseconds: 0 });
 
   // If the calculated time for today is already in the past, set it for tomorrow
-  if (isPast(nextCommuteDate)) {
-    nextCommuteDate = addDays(nextCommuteDate, 1);
+  if (isPast(nextArrivalDate)) {
+    nextArrivalDate = addDays(nextArrivalDate, 1);
   }
 
-  return formatISO(nextCommuteDate);
+  return formatISO(nextArrivalDate);
 };

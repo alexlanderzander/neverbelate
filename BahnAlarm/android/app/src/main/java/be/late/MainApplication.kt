@@ -1,4 +1,4 @@
-package com.bahnalarm
+package be.late
 
 import android.app.Application
 import com.facebook.react.PackageList

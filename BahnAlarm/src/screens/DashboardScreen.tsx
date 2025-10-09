@@ -1,8 +1,9 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { ScrollView, View, TouchableOpacity, Text, StyleSheet, SafeAreaView } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
 
 import { theme, colors } from '../styles/styles';
 import { AlarmDisplay } from '../components/AlarmDisplay';
@@ -10,7 +11,8 @@ import { StatusCard } from '../components/StatusCard';
 import { AdjustmentHistory } from '../components/AdjustmentHistory';
 
 import { findJourney } from '../api/DbApiService';
-import { getNextCommuteDateTime } from '../utils/timeHelper';
+import { getNextArrivalDateTime } from '../utils/timeHelper';
+import { notificationService } from '../services/NotificationService';
 import type { Journey } from '../types/ApiTypes';
 import type { UserSettings } from '../types/UserSettings';
 import type { AlarmAdjustment } from '../types/AlarmAdjustment';
@@ -32,13 +34,25 @@ export const DashboardScreen = ({ navigation }) => {
       const alarmTimeString = await AsyncStorage.getItem(ALARM_TIME_KEY);
       const historyString = await AsyncStorage.getItem(ADJUSTMENT_HISTORY_KEY);
 
-      setAlarmTime(alarmTimeString);
+      if (alarmTimeString) {
+        setAlarmTime(alarmTimeString);
+        const alarmDate = new Date(alarmTimeString);
+        notificationService.scheduleNotification(alarmDate, "It's time to go!");
+      }
+
       setHistory(historyString ? JSON.parse(historyString) : []);
 
       if (settingsString) {
-        const settings: UserSettings = JSON.parse(settingsString);
-        const nextCommuteDateTime = getNextCommuteDateTime(settings.departureTime);
-        const journeyData = await findJourney(settings.startStation.id, settings.destinationStation.id, nextCommuteDateTime);
+        let settings: UserSettings = JSON.parse(settingsString);
+        // Migration logic for old settings
+        if (!settings.arrivalTime && (settings as any).departureTime) {
+          settings.arrivalTime = (settings as any).departureTime;
+          delete (settings as any).departureTime;
+          await AsyncStorage.setItem(USER_SETTINGS_KEY, JSON.stringify(settings));
+        }
+
+        const nextArrivalDateTime = getNextArrivalDateTime(settings.arrivalTime);
+        const journeyData = await findJourney(settings.startStation.id, settings.destinationStation.id, nextArrivalDateTime, false);
         setJourney(journeyData.journeys[0] ?? null);
       } else {
         setJourney(null);
@@ -49,6 +63,10 @@ export const DashboardScreen = ({ navigation }) => {
     } finally {
       setIsLoading(false);
     }
+  }, []);
+
+  useEffect(() => {
+    PushNotificationIOS.requestPermissions();
   }, []);
 
   useFocusEffect(

@@ -14,7 +14,7 @@ interface TrainConnectionFormProps {
 export const TrainConnectionForm: React.FC<TrainConnectionFormProps> = ({ initialSettings, onSave }) => {
   const [startStation, setStartStation] = useState<{ id: string; name: string } | null>(initialSettings?.startStation ?? null);
   const [destinationStation, setDestinationStation] = useState<{ id: string; name: string } | null>(initialSettings?.destinationStation ?? null);
-  const [departureTime, setDepartureTime] = useState(initialSettings?.departureTime ?? '08:00');
+  const [arrivalTime, setArrivalTime] = useState(initialSettings?.arrivalTime ?? '08:00');
   const [preparationTime, setPreparationTime] = useState(initialSettings?.preparationTime?.toString() ?? '75');
 
   const [startQuery, setStartQuery] = useState('');
@@ -26,11 +26,11 @@ export const TrainConnectionForm: React.FC<TrainConnectionFormProps> = ({ initia
   const [activeInput, setActiveInput] = useState<'start' | 'dest' | null>(null);
 
   const handleSave = () => {
-    if (startStation && destinationStation && departureTime && preparationTime) {
+    if (startStation && destinationStation && arrivalTime && preparationTime) {
       onSave({
         startStation,
         destinationStation,
-        departureTime,
+        arrivalTime,
         preparationTime: parseInt(preparationTime, 10),
       });
     } else {
@@ -116,8 +116,8 @@ export const TrainConnectionForm: React.FC<TrainConnectionFormProps> = ({ initia
       {renderStationSelector(destQuery, setDestQuery, setDestinationStation, destinationStation, 'Destination Station', destResults, setDestResults, loadingDest, 'dest')}
       
       <View style={styles.inputGroup}>
-        <Text style={theme.label}>Standard Departure Time</Text>
-        <TextInput style={theme.input} value={departureTime} onChangeText={setDepartureTime} placeholder="HH:MM (24h)" />
+        <Text style={theme.label}>Standard Arrival Time</Text>
+        <TextInput style={theme.input} value={arrivalTime} onChangeText={setArrivalTime} placeholder="HH:MM (24h)" />
       </View>
 
       <View style={styles.inputGroup}>

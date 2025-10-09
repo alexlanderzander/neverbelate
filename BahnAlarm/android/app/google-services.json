@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "732554540915",
+    "project_id": "belate-f9e46",
+    "storage_bucket": "belate-f9e46.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:732554540915:android:9d8f2cba4c5e8bfa463706",
+        "android_client_info": {
+          "package_name": "be.late"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-zkXbAIaPDeofChjN-X9T_j5aTmoW00g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
